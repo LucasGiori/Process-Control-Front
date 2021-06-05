@@ -5,7 +5,8 @@ import {
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
-  CImg
+  CImg,
+  CButton
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
@@ -81,8 +82,17 @@ const TheHeaderDropdown = () => {
         </CDropdownItem>
         <CDropdownItem divider />
         <CDropdownItem>
+        <CButton
+            color="danger"
+            variant="outline"
+            shape="square"
+            size="sm"
+            onClick={()=>{window.localStorage.removeItem("token-processcontrol");window.location.reload()}}
+          >
           <CIcon name="cil-lock-locked" className="mfe-2" />
-          Lock Account
+          Sair
+          </CButton>
+          
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>

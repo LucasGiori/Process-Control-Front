@@ -9,7 +9,7 @@ const _nav =  [
     icon: <CIcon name="cil-speedometer" customClasses="c-sidebar-nav-icon"/>,
     badge: {
       color: 'info',
-      text: 'NEW',
+      text: '+',
     }
   },
   {
@@ -30,7 +30,39 @@ const _nav =  [
   },
   {
     _tag: 'CSidebarNavTitle',
-    _children: ['Components']
+    _children: ['Gestão']
+  },
+  {
+    _tag: 'CSidebarNavDropdown',
+    name: 'Gestão',
+    route: '/gestao',
+    icon: 'cil-calculator',
+    _children: [
+      {
+        _tag: 'CSidebarNavDropdown',
+        name: 'Usuário',
+        route: '/gestao/user',
+        
+        _children: [
+          {
+            _tag: 'CSidebarNavItem',
+            name: 'Salvar',
+            to: '/gestao/user/salvar',
+            icon:  <CIcon/>,
+          },
+          {
+            _tag: 'CSidebarNavItem',
+            name: 'Listar',
+            to: '/gestao/user/list',
+            icon:  <CIcon/>,
+          },
+        ]
+      }
+    ]
+  },
+  {
+    _tag: 'CSidebarNavTitle',
+    _children: ['Funcionalidades']
   },
   {
     _tag: 'CSidebarNavDropdown',
@@ -64,6 +96,26 @@ const _nav =  [
             _tag: 'CSidebarNavItem',
             name: 'Listar',
             to: '/administrativo/company/list',
+            icon:  <CIcon/>,
+          },
+        ]
+      },
+      {
+        _tag: 'CSidebarNavDropdown',
+        name: 'Advogado',
+        route: '/administrativo/attorney',
+        
+        _children: [
+          {
+            _tag: 'CSidebarNavItem',
+            name: 'Salvar',
+            to: '/administrativo/attorney/salvar',
+            icon:  <CIcon/>,
+          },
+          {
+            _tag: 'CSidebarNavItem',
+            name: 'Listar',
+            to: '/administrativo/attorney/list',
             icon:  <CIcon/>,
           },
         ]

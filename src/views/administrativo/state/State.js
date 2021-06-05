@@ -39,19 +39,14 @@ const States = () => {
     findStates()
   },[paginationState.currentPage])
 
-  if(error){
+  if(!isLoaded){
     return (
-        <React.Fragment>
-            <CAlert color="danger">${error.message}</CAlert>
-        </React.Fragment>
-    )
-  } else if (!isLoaded) {
-    return (
-        <React.Fragment>
-            <CSpinner color="primary" />
-        </React.Fragment>
+      <React.Fragment>
+          <CSpinner color="primary" />
+      </React.Fragment>
     )
   }
+  
   return (
     <>
       <CRow>

@@ -17,25 +17,34 @@ import toast, { Toaster } from 'react-hot-toast';
 import api from '../../../services/http-request';
 
 const fields = [
-    {key:'id',label:'Id'},
-    {key:'nameFantasy',label:"Fantasia"}, 
-    {key:'companyName',label:"Nome"}, 
-    {key:'city',label:"Cidade"},
-    {key:'companyType',label:"Tipo"}, 
-    {key:'situation',label:"Situação"},
+    {key:'id',label:'ID'},
+    {key:'name',label:"Nome"}, 
+    {key:'cpf',label:"CPF"}, 
+    {key:'login',label:"Login"},
+    {key:'email',label:"Email"},
+    {key:'userType',label:"Tipo"},
+    {key:'status',label:"Status"},
     {key:'editar',label:"", sorter: false, filter: false},
     {key:'deletar',label:"", sorter: false, filter: false}
 ];
 
-const getSituationColor = (situation) => {
-    switch (situation.toLowerCase()) {
-        case 'ativo': return 'success'
-        case 'inativo': return 'secondary'
+const getSituationColor = (status) => {
+    switch (status) {
+        case true: return 'success'
+        case false: return 'secondary'
         default: return 'primary'
       }
 };
 
-const CompanyList = () => {
+const getDescription = (status) => {
+  switch (status) {
+      case true: return 'Ativo'
+      case false: return 'Inativo'
+      default: return 'Indefinido'
+    }
+};
+
+const UserList = () => {
   
   const [paginationState,setPaginationState] = React.useState({currentPage:1,perPage:10});
   const [error, setError] = React.useState(null);
@@ -43,12 +52,12 @@ const CompanyList = () => {
   const [data,setData] =  React.useState([]);
 
   const [redirect, setRedirect] = React.useState({isRedirect: false, id: false});
-  let redirecting = redirect.isRedirect ? (<Redirect push to={`/administrativo/company/salvar/${redirect.id}`}/>) : '';
+  let redirecting = redirect.isRedirect ? (<Redirect push to={`/gestao/user/salvar/${redirect.id}`}/>) : '';
           
   
-  const findCompanies = async () => {
+  const findUsers = async () => {
       try{
-        const result = await api.get('/companies',{
+        const result = await api.get('/users',{
             page: paginationState.currentPage,
             limit: paginationState.perPage,
             order: 'id',
@@ -62,44 +71,48 @@ const CompanyList = () => {
       }
   } 
   
-  const handleDeleteCompany = async (id) => {
-      if(window.confirm(`Deseja mesmo excluir a empresa: ${id}`)) {
+  const handleDeleteUser = async (id) => {
+      if(window.confirm(`Deseja mesmo inativar o usuário: ${id}`)) {
         try{
-        
-          const result = await api.put(`/companies/${id}`,{situation: {id:2}});
+          const result = await api.put(`/users/${id}`,{status: false});
+
           if(result.status === 200){
-            toast.success("Empresa Inativada com sucesso!", {duration: 6000, icon: '👏'});
+            toast.success("Usuário Inativado com sucesso!", {duration: 6000, icon: '👏'});
             document.getElementById(`btnedit${id}`).disabled = true;
             document.getElementById(`btndelete${id}`).disabled = true;
             return;
           }
         } catch(error) {
-          const message = error.response.data.error[0].message_error ?? "Erro ao tentar atualizar empresa!"
+          const message = error.response.data.error[0].message_error ?? "Erro ao tentar inativar usuário!";
           toast.error(message, {duration: 6000 ,icon: '🔥'});
         }
-    }
-    
+    }    
   }
 
   React.useEffect(()=> {
-    findCompanies()
+    findUsers()
   },[paginationState.currentPage])
 
-  if(!isLoaded){
+  if(error){
     return (
-      <React.Fragment>
-          <CSpinner color="primary" />
-      </React.Fragment>
+        <React.Fragment>
+            <CAlert color="danger">${error.message}</CAlert>
+        </React.Fragment>
+    )
+  } else if (!isLoaded) {
+    return (
+        <React.Fragment>
+            <CSpinner color="primary" />
+        </React.Fragment>
     )
   }
-  
   return (
     <>
       <CRow>
         <CCol xs="12" lg="12">
           <CCard>
             <CCardHeader>
-              Empresas
+              Usuários
             </CCardHeader>
             <CCardBody>
             <CDataTable
@@ -107,12 +120,10 @@ const CompanyList = () => {
               fields={fields}
               striped
               scopedSlots = {{
-                'city':
-                  (item)=>{ return (<td><CBadge>{item.city.name}</CBadge></td>) },
-                'companyType':
-                  (item)=>{return (<td><CBadge>{item.companyType.name}</CBadge></td>) },
-                'situation':
-                  (item)=>{return (<td><CBadge color={getSituationColor(item.situation.description)}>{item.situation.description}</CBadge></td>)},
+                'userType':
+                  (item)=>{ return (<td><CBadge>{item.userType.description}</CBadge></td>) },
+                'status':
+                  (item)=>{return (<td><CBadge color={getSituationColor(item.status)}>{getDescription(item.status)}</CBadge></td>)},
                 'editar':
                   (item, index)=>{
                     return (
@@ -124,7 +135,7 @@ const CompanyList = () => {
                           shape="square"
                           size="sm"
                           onClick={()=>{setRedirect({isRedirect: true, id: item.id})}}
-                          disabled={item.situation.id === 1 ? false : true}
+                          disabled={item.status ? false : true}
                         >
                           Editar
                         </CButton>
@@ -135,15 +146,15 @@ const CompanyList = () => {
                   (item, index)=>{
                     return (
                       <td className="py-2">
-                        <a herf={`/administrativo/company/salvar/${item.id}`}>                
+                        <a herf={`/gestao/user/salvar/${item.id}`}>                
                         <CButton
                           id={`btndelete${item.id}`}
                           color="danger"
                           variant="outline"
                           shape="square"
                           size="sm"
-                          onClick={()=>{handleDeleteCompany(item.id);}}
-                          disabled={item.situation.id === 1 ? false : true}
+                          onClick={()=>{handleDeleteUser(item.id);}}
+                          disabled={item.status ? false : true}
                         >
                           Excluir
                         </CButton>
@@ -170,4 +181,4 @@ const CompanyList = () => {
   )
 }
 
-export default CompanyList
+export default UserList

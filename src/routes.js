@@ -9,11 +9,19 @@ const Carousels = React.lazy(() => import('./views/base/carousels/Carousels'));
 const Collapses = React.lazy(() => import('./views/base/collapses/Collapses'));
 const BasicForms = React.lazy(() => import('./views/base/forms/BasicForms'));
 const Company = React.lazy(() => import('./views/base/company/Company'));
+
+const UserSave = React.lazy(() => import('./views/gestao/user/UserSave'));
+const UserList = React.lazy(() => import('./views/gestao/user/UserList'));
+
 const State = React.lazy(() => import('./views/administrativo/state/State'));
 const CityList = React.lazy(() => import('./views/administrativo/city/City'));
 
 const CompanySave = React.lazy(() => import('./views/administrativo/company/CompanySave'));
 const CompanyList = React.lazy(() => import('./views/administrativo/company/CompanyList'));
+
+const AttorneySave = React.lazy(() => import('./views/administrativo/attorney/AttorneySave'));
+const AttorneyList = React.lazy(() => import('./views/administrativo/attorney/AttorneyList'));
+
 
 const Jumbotrons = React.lazy(() => import('./views/base/jumbotrons/Jumbotrons'));
 const ListGroups = React.lazy(() => import('./views/base/list-groups/ListGroups'));
@@ -57,9 +65,15 @@ const routes = [
   { path: '/base/collapses', name: 'Collapse', component: Collapses },
   { path: '/base/forms', name: 'Forms', component: BasicForms },
   { path: '/base/company', name: 'Company', component: Company},
+
+  { path: '/gestao/user/salvar/:id?', name: 'Salvar Usuário', component: UserSave},
+  { path: '/gestao/user/list', name: 'Lista Usuário', component: UserList},
+
   { path: '/administrativo/state', name: 'Estados', component: State},
   { path: '/administrativo/company/salvar/:id?', name: 'Salvar Empresa', component: CompanySave},
   { path: '/administrativo/company/list', name: 'Lista Empresa', component: CompanyList},
+  { path: '/administrativo/attorney/salvar/:id?', name: 'Salvar Advogado', component: AttorneySave},
+  { path: '/administrativo/attorney/list', name: 'Lista Advogados', component: AttorneyList},
 
   { path: '/administrativo/city', name: "Cidades", component: CityList},
   { path: '/base/jumbotrons', name: 'Jumbotrons', component: Jumbotrons },

@@ -12,29 +12,90 @@ import {
   CInputGroup,
   CInputGroupPrepend,
   CInputGroupText,
-  CRow
+  CRow,
+  CInvalidFeedback,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import toast, { Toaster } from 'react-hot-toast';
+import api from '../../../services/http-request';
+import { Redirect } from 'react-router-dom'
 
 const Login = () => {
+  const [validated, setValidated] = React.useState(false);
+  const [redirect, setRedirect] = React.useState(false);
+
+  
+  const TOKEN = 'token-processcontrol';
+  let redirecting =  redirect === true ? (<Redirect push to={'/dashboard'}/>) : '';
+
+  const handleSubmit = (event) => {
+    let form = document.getElementById("loginform");
+
+    if (!form.checkValidity()) {
+      event.preventDefault()
+      event.stopPropagation()
+      setValidated(true);
+      return
+    }
+
+    setValidated(true);
+
+    const formdata = new FormData(form);
+    var object = {}
+    formdata.forEach(function(value, key){
+      object[key] = value;
+    });
+
+    login(object);
+    return;
+  }
+
+  const login = async (payload) => {
+    try{
+      const result = await api.post('/login',payload);
+      let form = document.getElementById("loginform");
+
+      if(result.status === 200){
+        
+        setValidated(false);
+        form.reset();
+        toast.success("Login realizado com sucesso!", {duration: 6000, icon: '👏'});
+
+        const token = result.data.data.accesstoken;
+        const infoLogin = JSON.stringify(result.data.data);
+
+        window.localStorage.setItem(TOKEN, token);
+        window.localStorage.setItem('data', infoLogin);
+        setRedirect(true);
+        
+        return;
+      }
+    } catch(error) {
+      console.log(error);
+      const message = error.response.data.error[0].message_error ?? "Erro ao tentar realizar o login!"
+      toast.error(message, {duration: 6000 ,icon: '🔥'});
+    }
+  }
+
   return (
     <div className="c-app c-default-layout flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
-          <CCol md="8">
+          <CCol md="6">
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm>
+                  <CForm  wasValidated={validated} id="loginform">
                     <h1>Login</h1>
-                    <p className="text-muted">Sign In to your account</p>
+                    <p className="text-muted">Faça login na sua conta</p>
                     <CInputGroup className="mb-3">
                       <CInputGroupPrepend>
                         <CInputGroupText>
                           <CIcon name="cil-user" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="text" placeholder="Username" autoComplete="username" />
+                      <CInput type="text" name="login" placeholder="Login" required/>
+                      <CInvalidFeedback>Login não pode ser vazio</CInvalidFeedback>
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupPrepend>
@@ -42,29 +103,20 @@ const Login = () => {
                           <CIcon name="cil-lock-locked" />
                         </CInputGroupText>
                       </CInputGroupPrepend>
-                      <CInput type="password" placeholder="Password" autoComplete="current-password" />
+                      <CInput type="password" name="password" placeholder="Password" required/>
+                      <CInvalidFeedback>Password não pode ser vazio</CInvalidFeedback>
                     </CInputGroup>
+                    </CForm>
                     <CRow>
                       <CCol xs="6">
-                        <CButton color="primary" className="px-4">Login</CButton>
+                        <CButton  onClick={handleSubmit} type="button" color="primary" className="px-4">Login</CButton>
                       </CCol>
                       <CCol xs="6" className="text-right">
-                        <CButton color="link" className="px-0">Forgot password?</CButton>
+                        <CButton color="link" className="px-0">Esqueceu a senha?</CButton>
                       </CCol>
                     </CRow>
-                  </CForm>
-                </CCardBody>
-              </CCard>
-              <CCard className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
-                <CCardBody className="text-center">
-                  <div>
-                    <h2>Sign up</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                      labore et dolore magna aliqua.</p>
-                    <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>Register Now!</CButton>
-                    </Link>
-                  </div>
+                  {redirecting}
+                  <Toaster  position="top-right"/>
                 </CCardBody>
               </CCard>
             </CCardGroup>

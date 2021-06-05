@@ -6,18 +6,26 @@ const api = axios.create({
 });
 
 class HttpRequest {
+
     async get(url,query={}) {
             return await api.get(url,{
-                params: query
-            })
+                params: query,
+                headers: {
+                    'Authorization': `Bearer ${window.localStorage.getItem('token-processcontrol') ?? ''}`
+                }
+            }) 
     }
 
     async post(url,body={}) {
-        return await api.post(url,body)
+        return await api.post(url,body,{headers:{
+            'Authorization': `Bearer ${window.localStorage.getItem('token-processcontrol') ?? ''}`
+        }})
     }
 
     async put(url,body={}) {
-        return await api.put(url,body)
+        return await api.put(url,body,{headers:{
+            'Authorization': `Bearer ${window.localStorage.getItem('token-processcontrol') ?? ''}`
+        }})
     }
 }
 
