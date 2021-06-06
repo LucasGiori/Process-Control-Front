@@ -8,7 +8,6 @@ import {
   CDataTable,
   CPagination,
   CRow,
-  CAlert,
   CSpinner,
   CButton,
 } from '@coreui/react'
@@ -17,14 +16,9 @@ import toast, { Toaster } from 'react-hot-toast';
 import api from '../../../services/http-request';
 
 const fields = [
-    {key:'id',label:'Id'},
-    {key:'name',label:"Nome"}, 
-    {key:'cpf',label:"CPF"}, 
-    {key:'oab',label:"OAB"},
-    {key:'email',label:"Email"},
-    {key:'city',label:"Cidade"},
-    {key:'phone',label:"Telefone"},
-    {key:'office',label:"Escritório"},
+    {key:'id',label:'ID'},
+    {key:'description',label:"Descrição"},
+    {key:'actionType',label:"Tipo Ação"},
     {key:'situation',label:"Situação"},
     {key:'editar',label:"", sorter: false, filter: false},
     {key:'deletar',label:"", sorter: false, filter: false}
@@ -38,7 +32,7 @@ const getSituationColor = (situation) => {
       }
 };
 
-const AttorneyList = () => {
+const ActionList = () => {
   
   const [paginationState,setPaginationState] = React.useState({currentPage:1,perPage:100});
   const [error, setError] = React.useState(null);
@@ -46,12 +40,12 @@ const AttorneyList = () => {
   const [data,setData] =  React.useState([]);
 
   const [redirect, setRedirect] = React.useState({isRedirect: false, id: false});
-  let redirecting = redirect.isRedirect ? (<Redirect push to={`/administrativo/attorney/salvar/${redirect.id}`}/>) : '';
+  let redirecting = redirect.isRedirect ? (<Redirect push to={`/administrativo/action/salvar/${redirect.id}`}/>) : '';
           
   
-  const findAttorney = async () => {
+  const findActions = async () => {
       try{
-        const result = await api.get('/attorney',{
+        const result = await api.get('/actions',{
             page: paginationState.currentPage,
             limit: paginationState.perPage,
             order: 'id',
@@ -65,26 +59,26 @@ const AttorneyList = () => {
       }
   } 
   
-  const handleDeleteCompany = async (id) => {
-      if(window.confirm(`Deseja mesmo excluir a advogado: ${id}`)) {
+  const handleDeleteAction = async (id) => {
+      if(window.confirm(`Deseja mesmo inativar a ação: ${id}`)) {
         try{
-          const result = await api.put(`/attorney/${id}`,{situation: {id:2}});
+          const result = await api.put(`/actions/${id}`,{situation: {id:2}});
 
           if(result.status === 200){
-            toast.success("Advogado Inativado com sucesso!", {duration: 6000, icon: '👏'});
+            toast.success("Ação Inativada com sucesso!", {duration: 6000, icon: '👏'});
             document.getElementById(`btnedit${id}`).disabled = true;
             document.getElementById(`btndelete${id}`).disabled = true;
             return;
           }
         } catch(error) {
-          const message = error.response.data.error[0].message_error ?? "Erro ao tentar atualizar advogado!";
+          const message = error.response.data.error[0].message_error ?? "Erro ao tentar atualizar Ação!";
           toast.error(message, {duration: 6000 ,icon: '🔥'});
         }
     }    
   }
 
   React.useEffect(()=> {
-    findAttorney()
+    findActions()
   },[paginationState.currentPage])
 
   if(!isLoaded){
@@ -94,14 +88,14 @@ const AttorneyList = () => {
       </React.Fragment>
     )
   }
-
+  
   return (
     <>
       <CRow>
         <CCol xs="12" lg="12">
           <CCard>
             <CCardHeader>
-              Advogados
+              Ações
             </CCardHeader>
             <CCardBody>
             <CDataTable
@@ -109,10 +103,8 @@ const AttorneyList = () => {
               fields={fields}
               striped
               scopedSlots = {{
-                'city':
-                  (item)=>{ return (<td><CBadge>{item.city.name}</CBadge></td>) },
-                'office':
-                  (item)=>{return (<td><CBadge>{item.office.nameFantasy}</CBadge></td>) },
+                'actionType':
+                  (item)=>{return (<td><CBadge>{item.actionType.description}</CBadge></td>) },
                 'situation':
                   (item)=>{return (<td><CBadge color={getSituationColor(item.situation.description)}>{item.situation.description}</CBadge></td>)},
                 'editar':
@@ -137,14 +129,14 @@ const AttorneyList = () => {
                   (item, index)=>{
                     return (
                       <td className="py-2">
-                        <a herf={`/administrativo/company/salvar/${item.id}`}>                
+                        <a herf={`/administrativo/action/salvar/${item.id}`}>                
                         <CButton
                           id={`btndelete${item.id}`}
                           color="danger"
                           variant="outline"
                           shape="square"
                           size="sm"
-                          onClick={()=>{handleDeleteCompany(item.id);}}
+                          onClick={()=>{handleDeleteAction(item.id);}}
                           disabled={item.situation.id === 1 ? false : true}
                         >
                           Excluir
@@ -172,4 +164,4 @@ const AttorneyList = () => {
   )
 }
 
-export default AttorneyList
+export default ActionList

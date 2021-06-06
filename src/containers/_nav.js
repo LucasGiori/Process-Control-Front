@@ -120,6 +120,26 @@ const _nav =  [
           },
         ]
       },
+      {
+        _tag: 'CSidebarNavDropdown',
+        name: 'Ação',
+        route: '/administrativo/action',
+        
+        _children: [
+          {
+            _tag: 'CSidebarNavItem',
+            name: 'Salvar',
+            to: '/administrativo/action/salvar',
+            icon:  <CIcon/>,
+          },
+          {
+            _tag: 'CSidebarNavItem',
+            name: 'Listar',
+            to: '/administrativo/action/list',
+            icon:  <CIcon/>,
+          },
+        ]
+      },
     ]
   },
   {

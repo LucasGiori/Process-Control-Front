@@ -22,6 +22,9 @@ const CompanyList = React.lazy(() => import('./views/administrativo/company/Comp
 const AttorneySave = React.lazy(() => import('./views/administrativo/attorney/AttorneySave'));
 const AttorneyList = React.lazy(() => import('./views/administrativo/attorney/AttorneyList'));
 
+const ActionSave = React.lazy(() => import('./views/administrativo/action/ActionSave'));
+const ActionList = React.lazy(() => import('./views/administrativo/action/ActionList'));
+
 
 const Jumbotrons = React.lazy(() => import('./views/base/jumbotrons/Jumbotrons'));
 const ListGroups = React.lazy(() => import('./views/base/list-groups/ListGroups'));
@@ -70,10 +73,15 @@ const routes = [
   { path: '/gestao/user/list', name: 'Lista Usuário', component: UserList},
 
   { path: '/administrativo/state', name: 'Estados', component: State},
+
   { path: '/administrativo/company/salvar/:id?', name: 'Salvar Empresa', component: CompanySave},
   { path: '/administrativo/company/list', name: 'Lista Empresa', component: CompanyList},
+
   { path: '/administrativo/attorney/salvar/:id?', name: 'Salvar Advogado', component: AttorneySave},
   { path: '/administrativo/attorney/list', name: 'Lista Advogados', component: AttorneyList},
+
+  { path: '/administrativo/action/salvar/:id?', name: 'Salvar Ação', component: ActionSave},
+  { path: '/administrativo/action/list', name: 'Lista Ação', component: ActionList},
 
   { path: '/administrativo/city', name: "Cidades", component: CityList},
   { path: '/base/jumbotrons', name: 'Jumbotrons', component: Jumbotrons },
