@@ -35,24 +35,17 @@ const ProcessSave = () => {
   const [companies, setCompanies] = React.useState([]);
   const [offices, setOffices] = React.useState([]);
   const [attorney, setAttorney] = React.useState([]);
-  const [cities, setCities] = React.useState([]);
   const [search, setSearch] = React.useState('');
   const [haveSearchPermission, sethaveSearchPermission] = React.useState(true);
-  const [city, setCity] = React.useState({label: '', value: ''});
+  const [actions, setActions] = React.useState([]);
+  const [action, setAction] = React.useState([])
 
   const form = document.getElementById('processsave');
 
   const isEmpty = (obj) => Object.keys(obj).length  === 0;
   const existKey = (array,key) => !isEmpty(array.filter((obj) => { return obj === key}));
-  const handleChange = (value) => {setCity(value)};
+  const handleChange = (value) => {setAction(value)};
   const handleInputChange = (value) => {setSearch(value)}
-
-
-  const handleMask = (event) => {
-    let onlyNumber = event.target.value.replace(/\D/g, '');
-    onlyNumber = onlyNumber.substr(0,14);
-    event.target.value = onlyNumber.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
-  }
 
   const handleSubmit = (event) => {
     if (!form.checkValidity()) {
@@ -93,8 +86,8 @@ const ProcessSave = () => {
             return;
           }
 
-          if(['city'].includes(key)) {
-            setCity({label: data[key].name.concat(' - ', data[key].state.uf), value: data[key].id});
+          if(['action'].includes(key)) {
+            setActions({label: data[key].name.concat(' - ', data[key].state.uf), value: data[key].id});
             return;
           }
 
@@ -125,7 +118,7 @@ const ProcessSave = () => {
         return;
       }
     } catch(error) {
-      const message = error.response.data.error[0].message_error ?? "Erro ao tentar atualizar empresa!"
+      const message = error.response.data.error[0].message_error ?? "Erro ao tentar atualizar Processo!"
       toast.error(message, {duration: 6000 ,icon: '🔥'});
     }
   }
@@ -190,10 +183,31 @@ const ProcessSave = () => {
     } 
   }
 
+  const findActions = async () => {
+    try{
+      const result =  await api.get('/actions',
+        {
+          order: "description",
+          sort: "ASC",
+          search_field:"description",
+          search:search,
+          limit: 120
+        }
+      );
+      setActions(result.data.data.data ?? []);
+    } catch(error){
+      toast.error(error.response.data.error[0].message_error ?? "Erro ao tentar buscar ações!", {duration: 4000 ,icon: '🔥'});
+    }
+  }
+
   React.useEffect(()=> {
     findOffices();
     findCompanies();
   },[]);
+
+  React.useEffect(() => {
+    findActions();
+  },[search])
   
   let { id } = useParams();
 
@@ -208,7 +222,7 @@ const ProcessSave = () => {
           <CCol xs="12" sm="12">
             <CCard>
             <CCardHeader>
-              Empresa   
+              Processo   
               <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                 <Link to="/administrativo/process/list">
                   <CButton size="sm" color="info"> Listar Processos!</CButton>
@@ -284,6 +298,27 @@ const ProcessSave = () => {
                         <CLabel htmlFor="stageProcess">Estágio processo</CLabel>
                         <CInput id="stageProcess" name="stageProcess" placeholder="Estágio em que o processo se encontra" />
                       </CFormGroup>
+                    </CCol>
+                  </CRow>
+                  <CRow>
+                  <CCol xs="12">
+                        <CFormGroup>
+                        <CLabel htmlFor="action">Ação</CLabel>
+                        <Select
+                          isMulti={true}
+                          value={action}
+                          onChange={handleChange}
+                          onInputChange={handleInputChange}
+                          placeholder={"Selecione as ações"}
+                          inputId="aria-input"
+                          name="action"
+                          options={actions.map((action)=>{
+                            return {value: action.id, label: action.description?.concat(' - ', action?.actionType?.description) ?? '' }
+                          })}
+                          required
+                        />
+                        <CInvalidFeedback >Selecione uma ação</CInvalidFeedback>
+                        </CFormGroup>
                     </CCol>
                   </CRow>
                   <CRow>
