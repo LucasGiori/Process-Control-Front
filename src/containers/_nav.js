@@ -140,6 +140,26 @@ const _nav =  [
           },
         ]
       },
+      {
+        _tag: 'CSidebarNavDropdown',
+        name: 'Processo',
+        route: '/administrativo/process',
+        
+        _children: [
+          {
+            _tag: 'CSidebarNavItem',
+            name: 'Salvar',
+            to: '/administrativo/process/salvar',
+            icon:  <CIcon/>,
+          },
+          {
+            _tag: 'CSidebarNavItem',
+            name: 'Listar',
+            to: '/administrativo/process/list',
+            icon:  <CIcon/>,
+          },
+        ]
+      },
     ]
   },
   {
