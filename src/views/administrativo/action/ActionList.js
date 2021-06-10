@@ -34,7 +34,7 @@ const getSituationColor = (situation) => {
 
 const ActionList = () => {
   
-  const [paginationState,setPaginationState] = React.useState({currentPage:1,perPage:100});
+  const [paginationState,setPaginationState] = React.useState({currentPage:1,perPage:10});
   const [error, setError] = React.useState(null);
   const [isLoaded,setIsLoaded] = React.useState(false);
   const [data,setData] =  React.useState([]);

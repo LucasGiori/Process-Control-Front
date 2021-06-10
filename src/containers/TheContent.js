@@ -26,9 +26,7 @@ const TheContent = () => {
         <Suspense fallback={loading}>
           <Switch>
             {routes.map((route, idx) => {
-              console.log(infoLogin !== {} && route.path.indexOf("/gestao") >= 0 && parseInt(infoLogin.type) === TYPE_USER_ORDINARY);
               if (infoLogin !== {} && route.path.indexOf("/gestao") >= 0 && parseInt(infoLogin.type) === TYPE_USER_ORDINARY) {
-                console.log(route);
                 return;
               }
               return route.component && (

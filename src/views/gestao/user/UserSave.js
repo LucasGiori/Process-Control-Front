@@ -75,7 +75,7 @@ const UserSave = () => {
   const getUser = async (id) => {
     const result = await api.get(`/users?id=${id}`);
     const data = result.data.data.data[0];
-
+    console.log(data);
     if(data) {
       Object.keys(data).forEach(function(key) {
         try{
@@ -153,14 +153,13 @@ const UserSave = () => {
   
   let { id } = useParams();
 
-  const TYPE_USER_ORDINARY = 2;
+  const TYPE_USER_ADMIN = 1;
   const infoLogin = JSON.parse(window.localStorage.getItem('data') ?? '{}');
 
   if(id !== undefined && haveSearchPermission) {
     id = parseInt(id.replace(/\D/g, ''));
     
-    if(parseInt(infoLogin.type) === TYPE_USER_ORDINARY && parseInt(infoLogin.iduser) === id) {
-      alert(id);
+    if(parseInt(infoLogin.type) === TYPE_USER_ADMIN && parseInt(infoLogin.iduser) === id) {
       getUser(id);
     }
     sethaveSearchPermission(false);

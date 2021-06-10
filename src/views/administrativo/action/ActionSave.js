@@ -151,7 +151,7 @@ const ActionSave = () => {
           <CCol xs="12" sm="12">
             <CCard>
             <CCardHeader>
-              Advogado   
+              Ação   
               <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                 <Link to="/administrativo/action/list">
                   <CButton size="sm" color="info"> Listar Ações!</CButton>
