@@ -208,14 +208,8 @@ const _nav =  [
         _children: [
           {
             _tag: 'CSidebarNavItem',
-            name: 'Salvar',
-            to: '/administrativo/process/salvar',
-            icon:  <CIcon/>,
-          },
-          {
-            _tag: 'CSidebarNavItem',
             name: 'Listar',
-            to: '/administrativo/process/list',
+            to: '/reports/process/list',
             icon:  <CIcon/>,
           },
         ]

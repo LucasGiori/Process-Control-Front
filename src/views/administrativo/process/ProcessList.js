@@ -37,7 +37,7 @@ const getSituationColor = (status) => {
 const getDescription = (status) => {
     switch (status) {
         case true: return 'Ativo'
-        case false: return 'Inativo'
+        case false: return 'Baixado'
         default: return 'Indefinido'
       }
   };

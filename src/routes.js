@@ -30,6 +30,7 @@ const ProcessList = React.lazy(() => import('./views/administrativo/process/Proc
 
 const CompanyReport = React.lazy(() => import('./views/reports/company/CompanyReport'));
 const AttorneyReport = React.lazy(() => import('./views/reports/attorney/AttorneyReport'));
+const ProcessReport = React.lazy(() => import('./views/reports/process/ProcessReport'));
 
 
 const Jumbotrons = React.lazy(() => import('./views/base/jumbotrons/Jumbotrons'));
@@ -94,6 +95,7 @@ const routes = [
 
   { path: '/reports/company/list', name: 'Relatório Empresas', component: CompanyReport},
   { path: '/reports/attorney/list', name: 'Relatório Advogados', component: AttorneyReport},
+  { path: '/reports/process/list', name: 'Relatório Processos', component: ProcessReport},
 
   { path: '/administrativo/city', name: "Cidades", component: CityList},
   { path: '/base/jumbotrons', name: 'Jumbotrons', component: Jumbotrons },

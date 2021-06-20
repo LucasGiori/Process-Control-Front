@@ -25,6 +25,7 @@ import Select from 'react-select';
 import { Redirect } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast';
 import api from '../../../services/http-request';
+import { array } from 'prop-types';
 
 const fields = [
     {key:'id',label:'Id'},
@@ -35,7 +36,7 @@ const fields = [
     {key:'email',label:"E-Mail"}, 
     {key:'city',label:"Cidade"}, 
     {key:'office',label:"Escritório"}, 
-    {key:'situation',label:"Situação"},
+    {key:'situation',label:"Situação", sorter: true, filter: true},
 ];
 
 const getSituationColor = (situation) => {
@@ -85,7 +86,7 @@ const CompanyReport = () => {
   const [typeFilter, setTypeFilter] = React.useState(FILTER_NAME);
 
   const [redirect, setRedirect] = React.useState({isRedirect: false, id: false});
-  let redirecting = redirect.isRedirect ? (<Redirect push to={`/administrativo/company/salvar/${redirect.id}`}/>) : '';
+  let redirecting = redirect.isRedirect ? (<Redirect push to={`/reports/process/list/${redirect.id}`}/>) : '';
           
   
   const findAttorney = async () => {
@@ -95,7 +96,7 @@ const CompanyReport = () => {
             search_field: typeFilter,
             page: parseInt(paginationState.currentPage) < 1 ? 1 : paginationState.currentPage,
             limit: paginationState.perPage,
-            order: 'id',
+            order: 'name',
             sort: 'ASC'
         }
         
@@ -123,7 +124,11 @@ const CompanyReport = () => {
           limit: 120
         }
       );
-      setOffices(result.data.data.data ?? []);
+
+      let offices = result.data.data.data ?? [];
+      offices.unshift({id:'', nameFantasy:'Todos'});
+      setOffices(offices);
+
     } catch(error){
       toast.error(error.response.data.error[0].message_error ?? "Erro ao tentar buscar cidades!", {duration: 4000 ,icon: '🔥'});
     }
