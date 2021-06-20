@@ -79,7 +79,7 @@ const CompanyReport = () => {
         const result = await api.get('/companies',{
             search: search,
             search_field: typeFilter,
-            page: paginationState.currentPage,
+            page: parseInt(paginationState.currentPage) < 1 ? 1 : paginationState.currentPage,
             limit: paginationState.perPage,
             order: 'id',
             sort: 'ASC'
@@ -95,7 +95,7 @@ const CompanyReport = () => {
 
   React.useEffect(()=> {
     findCompanies()
-  },[search])//paginationState.currentPage,
+  },[search, paginationState.currentPage])//paginationState.currentPage,
 
   if(!isLoaded){
     return (
@@ -132,7 +132,7 @@ const CompanyReport = () => {
                             id="input1-group3" 
                             name="input1-group3" 
                             placeholder={getDescriptionTypeFilter(typeFilter)} 
-                            onKeyDown={(event)=>{setSearch(event.target.value)}}
+                            onKeyUp={(event)=>{setSearch(event.target.value)}}
                         />
                         </CInputGroup>
                     </CCol>
@@ -155,44 +155,6 @@ const CompanyReport = () => {
                   (item)=>{return (<td><CBadge>{item.companyType.name}</CBadge></td>) },
                 'situation':
                   (item)=>{return (<td><CBadge color={getSituationColor(item.situation.description)}>{item.situation.description}</CBadge></td>)},
-                // 'editar':
-                //   (item, index)=>{
-                //     return (
-                //       <td className="py-2">
-                //         <CButton
-                //           id={`btnedit${item.id}`}
-                //           color="info"
-                //           variant="outline"
-                //           shape="square"
-                //           size="sm"
-                //           onClick={()=>{setRedirect({isRedirect: true, id: item.id})}}
-                //           disabled={item.situation.id === 1 ? false : true}
-                //         >
-                //           Editar
-                //         </CButton>
-                //       </td>
-                //       )
-                //   },
-                // 'deletar':
-                //   (item, index)=>{
-                //     return (
-                //       <td className="py-2">
-                //         <a herf={`/administrativo/company/salvar/${item.id}`}>                
-                //         <CButton
-                //           id={`btndelete${item.id}`}
-                //           color="danger"
-                //           variant="outline"
-                //           shape="square"
-                //           size="sm"
-                //           disabled={item.situation.id === 1 ? false : true}
-                //         >
-                //           Excluir
-                //         </CButton>
-                //         </a>
-                //       </td>
-                //       )
-                //   },
-                
                 }}
             />
             <CPagination
