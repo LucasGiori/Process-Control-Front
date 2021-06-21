@@ -57,13 +57,13 @@ const States = () => {
             </CCardHeader>
             <CCardBody>
             <CDataTable
-              items={data.data.data}
+              items={data?.data?.data ?? []}
               fields={fields}
               striped
             />
             <CPagination
               activePage={paginationState.currentPage}
-              pages={data.data.last_page}
+              pages={data?.data?.last_page ?? 0}
               align="start"
               onActivePageChange={(page) => setPaginationState({currentPage:page,perPage:paginationState.perPage})}
             />

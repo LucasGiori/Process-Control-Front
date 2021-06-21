@@ -103,7 +103,7 @@ const CompanyList = () => {
             </CCardHeader>
             <CCardBody>
             <CDataTable
-              items={data.data.data}
+              items={data?.data?.data ?? []}
               fields={fields}
               striped
               scopedSlots = {{
@@ -156,7 +156,7 @@ const CompanyList = () => {
             />
             <CPagination
               activePage={paginationState.currentPage}
-              pages={data.data.last_page}
+              pages={data?.data?.last_page ?? 0}
               align="start"
               onActivePageChange={(page) => setPaginationState({currentPage:page,perPage:paginationState.perPage})}
             />

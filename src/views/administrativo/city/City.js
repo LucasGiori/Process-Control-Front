@@ -58,7 +58,7 @@ const CityList = () => {
             </CCardHeader>
             <CCardBody>
             <CDataTable
-              items={data.data.data}
+              items={data?.data?.data ?? []}
               fields={fields}
               striped
               scopedSlots = {{
@@ -74,7 +74,7 @@ const CityList = () => {
             />
             <CPagination
               activePage={paginationState.currentPage}
-              pages={data.data.last_page}
+              pages={data?.data?.last_page ?? 1}
               align="start"
               onActivePageChange={(page) => setPaginationState({currentPage:page,perPage:paginationState.perPage})}
             />

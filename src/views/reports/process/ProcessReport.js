@@ -99,7 +99,7 @@ const CompanyReport = () => {
         }
         
         if(search) {
-            filters[typeFilter] = search
+            filters[typeFilter] = search;
         }
         
         if(office.value) {
@@ -208,7 +208,7 @@ const CompanyReport = () => {
             <hr/>
 
             <CDataTable
-              items={data.data.data}
+              items={data?.data?.data ?? []}
               fields={fields}
               striped
               scopedSlots = {{
@@ -256,7 +256,7 @@ const CompanyReport = () => {
             />
             <CPagination
               activePage={paginationState.currentPage}
-              pages={data.data.last_page}
+              pages={data?.data?.last_page ?? 0}
               align="start"
               onActivePageChange={(page) => setPaginationState({currentPage:page,perPage:paginationState.perPage})}
             />
