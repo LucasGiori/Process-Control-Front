@@ -119,6 +119,7 @@ const CompanyReport = () => {
         {
           order: "nameFantasy",
           sort: "ASC",
+          companyType: 2,
           search_field:"nameFantasy",
           search:searchOffice,
           limit: 120
