@@ -30,12 +30,12 @@ const fields = [
     {key:'id',label:'Id'},
     {key:'number', label: 'Número Processo'},
     {key:'notificationDate',label:"Data Notif."}, 
-    {key:'company',label:"Empresa"}, 
-    {key:'office',label:"Escritório"}, 
-    {key:'attorney',label:"Advogado"},
-    {key:'stageProcess',label:"Estágio Processo"},  
+    {key:'company',label:"Empresa", sorter: false, filter: false}, 
+    {key:'office',label:"Escritório", sorter: false, filter: false}, 
+    {key:'attorney',label:"Advogado", sorter: false, filter: false},
+    {key:'stageProcess',label:"Estágio Processo", sorter: true, filter: true},  
     {key:'status',label:"Situação"},
-    {key:'detalhes',label:"Detalhes"},
+    {key:'detalhes',label:"Detalhes", sorter: false, filter: false},
 ];
 
 const getSituationColor = (situation) => {

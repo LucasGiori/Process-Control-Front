@@ -30,9 +30,9 @@ const fields = [
     {key:'cnpj', label: 'Cnpj'},
     {key:'nameFantasy',label:"Fantasia"}, 
     {key:'companyName',label:"Nome"}, 
-    {key:'city',label:"Cidade"},
-    {key:'companyType',label:"Tipo"}, 
-    {key:'situation',label:"Situação"},
+    {key:'city',label:"Cidade", sorter: false, filter: false},
+    {key:'companyType',label:"Tipo", sorter: false, filter: false}, 
+    {key:'situation',label:"Situação", sorter: false, filter: false},
 ];
 
 const getSituationColor = (situation) => {
@@ -143,7 +143,10 @@ const CompanyReport = () => {
             <CDataTable
               items={data?.data?.data ?? []}
               fields={fields}
+              columnFilter
               striped
+              hover
+              sorter
               scopedSlots = {{
                 'cnpj': 
                   (item)=>{

@@ -34,9 +34,9 @@ const fields = [
     {key:'oab',label:"OAB"}, 
     {key:'phone',label:"Telefone"},
     {key:'email',label:"E-Mail"}, 
-    {key:'city',label:"Cidade"}, 
-    {key:'office',label:"Escritório"}, 
-    {key:'situation',label:"Situação", sorter: true, filter: true},
+    {key:'city',label:"Cidade", sorter: false, filter: false}, 
+    {key:'office',label:"Escritório", sorter: false, filter: false}, 
+    {key:'situation',label:"Situação", sorter: false, filter: false},
 ];
 
 const getSituationColor = (situation) => {
@@ -209,7 +209,10 @@ const CompanyReport = () => {
             <CDataTable
               items={data?.data?.data ?? []}
               fields={fields}
+              columnFilter
               striped
+              hover
+              sorter
               scopedSlots = {{
                 'cpf': 
                   (item)=>{
