@@ -72,7 +72,7 @@ const Login = () => {
       }
     } catch(error) {
       console.log(error);
-      const message = error.response.data.error[0].message_error ?? "Erro ao tentar realizar o login!"
+      const message = error?.response?.data?.error[0]?.message_error ?? "Erro ao tentar realizar o login!"
       toast.error(message, {duration: 6000 ,icon: '🔥'});
     }
   }
