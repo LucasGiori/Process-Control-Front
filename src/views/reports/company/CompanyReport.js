@@ -24,6 +24,7 @@ import {
 import { Redirect } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast';
 import api from '../../../services/http-request';
+import CsvDownload from 'react-json-to-csv'
 
 const fields = [
     {key:'id',label:'Id'},
@@ -50,6 +51,7 @@ const CompanyReport = () => {
   const [isLoaded,setIsLoaded] = React.useState(false);
   const [data,setData] =  React.useState([]);
   const [search, setSearch] = React.useState('');
+  const [dataDownload, setDataDownload] = React.useState([]);
 
   const FILTER_NAME_FANTASY = "nameFantasy";
   const FILTER_NAME_COMPANY = "companyName";
@@ -84,6 +86,22 @@ const CompanyReport = () => {
             order: 'id',
             sort: 'ASC'
         });
+
+        const arrayData = result?.data?.data?.data ?? [];
+        const csvData = arrayData.map((item) => {
+            return {
+              id: item.id,
+              cnpj: item.cnpj,
+              nameFantasy: item.nameFantasy,
+              companyName: item.companyName,
+              companyType: item.companyType.name,
+              situation: item.situation.description,
+              createdAt: item.createdAt,
+              
+            }
+        });
+        setDataDownload(csvData)
+
         setData(result.data);
       } catch(error){
         setError(error);
@@ -139,7 +157,7 @@ const CompanyReport = () => {
                     </CFormGroup>
                 </CForm>
             <hr/>
-
+            <CsvDownload className={"btn btn-outline-info btn-sm btn-square"} data={dataDownload} />  
             <CDataTable
               items={data?.data?.data ?? []}
               fields={fields}

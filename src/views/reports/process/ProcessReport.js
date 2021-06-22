@@ -25,6 +25,7 @@ import Select from 'react-select';
 import { Redirect } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast';
 import api from '../../../services/http-request';
+import CsvDownload from 'react-json-to-csv'
 
 const fields = [
     {key:'id',label:'Id'},
@@ -68,6 +69,7 @@ const CompanyReport = () => {
   const [office, setOffice] = React.useState({label: '', value: ''});
   const [company, setCompany] = React.useState({label: '', value: ''});
   const [status, setStatus] = React.useState({label: '', value: ''});
+  const [dataDownload, setDataDownload] = React.useState([]);
 
   const handleChange = (value) => {setOffice(value)};
   const handleInputChange = (value) => {setSearchOffice(value)}
@@ -139,7 +141,19 @@ const CompanyReport = () => {
             const result_filtered = result.data.data.data.filter(filterData);
             result.data.data.data = result_filtered
         }
-
+        
+        const arrayData = result?.data?.data?.data ?? [];
+        const csvData = arrayData.map((item) => {
+            return {
+              id: item.id,
+              number: item.number,
+              description: item.description,
+              observation: item.observation,
+              createdAt: item.createdAt,
+              notificationDate: item.notificationDate
+            }
+        });
+        setDataDownload(csvData)
         setData(result.data);
       } catch(error){
         setError(error);
@@ -234,6 +248,7 @@ const CompanyReport = () => {
             <CCardHeader>
               Relatório Advogados
             </CCardHeader>
+            
             <CCardBody>
                 <CForm className="form-horizontal">
                     <CFormGroup row>
@@ -306,7 +321,7 @@ const CompanyReport = () => {
                     
                 </CForm>
             <hr/>
-
+            <CsvDownload className={"btn btn-outline-info btn-sm btn-square"} data={dataDownload} />                     
             <CDataTable
               items={data?.data?.data ?? []}
               fields={fields}

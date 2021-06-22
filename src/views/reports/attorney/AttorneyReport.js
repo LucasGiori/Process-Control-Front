@@ -25,7 +25,7 @@ import Select from 'react-select';
 import { Redirect } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast';
 import api from '../../../services/http-request';
-import { array } from 'prop-types';
+import CsvDownload from 'react-json-to-csv'
 
 const fields = [
     {key:'id',label:'Id'},
@@ -64,6 +64,7 @@ const CompanyReport = () => {
   const [search, setSearch] = React.useState('');
   const [searchOffice, setSearchOffice] = React.useState('');
   const [office, setOffice] = React.useState({label: '', value: ''});
+  const [dataDownload, setDataDownload] = React.useState([]);
 
   const handleChange = (value) => {setOffice(value)};
   const handleInputChange = (value) => {setSearchOffice(value)}
@@ -105,6 +106,23 @@ const CompanyReport = () => {
         }
 
         const result = await api.get('/attorney',filters);
+
+        const arrayData = result?.data?.data?.data ?? [];
+        const csvData = arrayData.map((item) => {
+            return {
+              id: item.id,
+              cpf: item.cpf,
+              email: item.email,
+              oab: item.oab,
+              phone: item.phone,
+              office: item.office.nameFantasy,
+              situation: item.situation.description,
+              createdAt: item.createdAt,
+              
+            }
+        });
+        setDataDownload(csvData)
+
         setData(result.data);
       } catch(error){
         setError(error);
@@ -205,7 +223,7 @@ const CompanyReport = () => {
                     
                 </CForm>
             <hr/>
-
+            <CsvDownload className={"btn btn-outline-info btn-sm btn-square"} data={dataDownload} />                         
             <CDataTable
               items={data?.data?.data ?? []}
               fields={fields}
