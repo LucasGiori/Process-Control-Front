@@ -17,6 +17,7 @@ import {
   CTextarea,
 } from '@coreui/react'
 import Select from 'react-select';
+// import DatePicker, { CalendarContainer } from 'react-datepicker';
 import toast, { Toaster } from 'react-hot-toast';
 import { Link,useParams } from 'react-router-dom';
 import api from '../../../services/http-request';
@@ -38,7 +39,9 @@ const ProcessSave = () => {
   const [search, setSearch] = React.useState('');
   const [haveSearchPermission, sethaveSearchPermission] = React.useState(true);
   const [actions, setActions] = React.useState([]);
-  const [action, setAction] = React.useState([])
+  const [action, setAction] = React.useState([]);
+  const [startDate, setStartDate] = React.useState(new Date());
+  const [visibleFields,setVisibleFields] = React.useState(true);
 
   const form = document.getElementById('processsave');
 
@@ -58,36 +61,52 @@ const ProcessSave = () => {
     setValidated(true);
 
     const formdata = new FormData(form);
-    var object = {}
-    formdata.forEach(function(value, key){
-      value = existKey(['city','companyType'],key) ?  {"id":value} : value;
-      if(key !== 'status') object[key] = value;
-      if(key === 'cnpj') object[key] = value.replace(/\D/g, '');
-    });
-    object['status'] = document.getElementById('situation').checked ? true : false;
-    object['id'] = document.getElementById('id').value;
-    
-    if(isEmpty(object.id)) {
-      postCompany(object);
+    if(!document.getElementById('id')?.value && action.length <= 0) {
+      toast.error("Selecione as ações referente ao processo!", {duration: 6000 ,icon: '🔥'});
       return;
     }
-    putCompany(object); 
+
+    const dt = document.getElementById("notificationDate").value.split('-');
+    let object = {
+      "id":document.getElementById('id')?.value ?? "",
+      "number": document.getElementById("number").value,
+      "company": {id: parseInt(document.getElementById("company").value)},
+      "notificationDate": `${dt[1]}/${dt[2]}/${dt[0]} 00:00:00`,
+      "observation": document.getElementById("observation").value,
+      "description": document.getElementById("description").value,
+      "status": document.getElementById('status').checked ? true : false,
+    }
+    const movements = [
+      {
+        "office": {id: parseInt(document.getElementById("office").value)},
+        "attorney": {id: parseInt(document.getElementById("attorney").value)},
+        "links": document.getElementById("links")?.value ?? "",
+        "stageProcess": document.getElementById("stageProcess")?.value ?? "",
+        "comment": document.getElementById("comment")?.value ?? ""
+      }
+    ];
+    
+    object["items"] = action.map(function(item) {return {action: {id: parseInt(item.value)}}})
+
+    if(isEmpty(object.id)) {
+      object["movements"] = movements;
+      postProcess(object);
+      return;
+    }
+    putProcess(object); 
   }
 
-  const getCompany = async (id) => {
-    const result = await api.get(`/companies?id=${id}`);
+  const getProcess = async (id) => {
+    setVisibleFields(false);
+    const result = await api.get(`/process?id=${id}`);
+    findAttorney(null);
     const data = result.data.data.data[0];
-    
+    console.log(data);
     if(data) {
       Object.keys(data).forEach(function(key) {
         try{
-          if(['companyType'].includes(key)) {
-            document.getElementsByName(key)[0].value = data[key].id
-            return;
-          }
-
-          if(['action'].includes(key)) {
-            setActions({label: data[key].name.concat(' - ', data[key].state.uf), value: data[key].id});
+          if(['company'].includes(key)) {
+            document.getElementById("company").value = data[key].id
             return;
           }
 
@@ -95,6 +114,12 @@ const ProcessSave = () => {
             const situation = data[key].id === 1 ? true : false;
             document.getElementsByName(key)[0].checked = situation;
             return;
+          }
+
+          if(['description'].includes(key)) {
+            console.log('teste',data[key]);
+            document.getElementById('description').value = data[key];
+            return
           }
 
           document.getElementsByName(key)[0].value = data[key]
@@ -106,31 +131,35 @@ const ProcessSave = () => {
     }
   }
 
-  const putCompany = async (payload) => {
+  const putProcess = async (payload) => {
     try{
-      const result = await api.put(`/companies/${payload.id.replace(/\D/g, '')}`,payload);
+      const result = await api.put(`/process/${payload.id.replace(/\D/g, '')}`,payload);
 
       if(result.status === 200){
         setValidated(false);
         form.reset();
-        toast.success("Empresa atualizada com sucesso!", {duration: 6000, icon: '👏'});
+        setAction([]);
+        toast.success("Processo Atualizado com sucesso!", {duration: 6000, icon: '👏'});
         sethaveSearchPermission(false);
         return;
       }
     } catch(error) {
+      console.log(error.response)
       const message = error.response.data.error[0].message_error ?? "Erro ao tentar atualizar Processo!"
       toast.error(message, {duration: 6000 ,icon: '🔥'});
     }
   }
 
-  const postCompany = async (payload) => {
+  const postProcess = async (payload) => {
     try{
-      const result = await api.post('/companies',payload);
 
+      const result = await api.post('/process',payload);
+      
       if(result.status === 201){
         setValidated(false);
         form.reset();
-        const message = result.data.data.message ?? "Cadastrado com sucesso!"
+        setAction([]);
+        const message = result.data.data.message ?? "Process cadastrado com sucesso!"
         toast.success(message, {duration: 6000, icon: '👏'});
         sethaveSearchPermission(false);
         return;
@@ -171,12 +200,17 @@ const ProcessSave = () => {
 
   const findAttorney = async (event) => {
     try{
-      const result = await api.get('/attorney',{
-          office: event.target.value,
-          order: "name",
-          sort: "ASC",
-          limit: 120
-      });
+      let filters = {
+        order: "name",
+        sort: "ASC",
+        limit: 120
+      };
+
+      if(event?.target?.value) {
+        filters["office"] = event.target.value;
+      }
+
+      const result = await api.get('/attorney',);
       setAttorney(result.data.data.data ?? []);
     } catch(error){
       toast.error(error.response.data.error[0].message_error ?? "Erro ao tentar buscar advogados!", {duration: 4000 ,icon: '🔥'});
@@ -212,7 +246,7 @@ const ProcessSave = () => {
   let { id } = useParams();
 
   if(id !== undefined && haveSearchPermission) {
-    getCompany(id.replace(/\D/g, ''));
+    getProcess(id.replace(/\D/g, ''));
     sethaveSearchPermission(false);
   }
 
@@ -248,14 +282,20 @@ const ProcessSave = () => {
                     <CCol xs="3">
                       <CFormGroup>
                         <CLabel htmlFor="notificationDate">Data de Notificação</CLabel>
-                        <CInput id="notificationDate" type="date" name="notificationDate" placeholder="Informe a data de notificação" required />
+                        
+                        
+                        <CInput type="date" id="notificationDate" name="notificationDate" placeholder="date" />
                         <CInvalidFeedback>A data não pode ser vazia</CInvalidFeedback>
                       </CFormGroup>
                     </CCol>
                     <CCol xs="4">
                       <CFormGroup>
                         <CLabel htmlFor="company">Empresa ref. Processo</CLabel>
-                        <CSelect custom id="company" name="company" required>
+                        <CSelect 
+                          custom 
+                          id="company" 
+                          name="company"
+                          required>
                           <option></option>
                           { companies.map((company) => (
                               <option key={company.id} value={company.id}>{company.nameFantasy}</option>
@@ -267,33 +307,33 @@ const ProcessSave = () => {
                     </CCol>
                   </CRow>
                   <CRow>
-                    <CCol xs="4">
-                        <CFormGroup>
+                    <CCol xs="4" hidden={!visibleFields}>
+                        <CFormGroup >
                         <CLabel htmlFor="office">Escritório Responsável</CLabel>
-                        <CSelect custom id="office" name="office" onChange={findAttorney} required>
+                        <CSelect custom id="office" name="office" onChange={findAttorney} required={visibleFields}>
                             <option></option>
                             { offices.map((company) => (
                                 <option key={company.id} value={company.id}>{company.nameFantasy}</option>
                             ))
                             }
                         </CSelect>
-                        <CInvalidFeedback >Selecione uma escritório</CInvalidFeedback>
+                        {visibleFields ? <CInvalidFeedback >Selecione um escritório</CInvalidFeedback> : ""}
                         </CFormGroup>
                     </CCol>
-                    <CCol xs="4">
+                    <CCol xs="4" hidden={!visibleFields}>
                         <CFormGroup>
                         <CLabel htmlFor="attorney">Advogado Responsável</CLabel>
-                        <CSelect custom id="attorney" name="attorney" required>
+                        <CSelect custom id="attorney" name="attorney" required={visibleFields}>
                             <option></option>
                             { attorney.map((attorneyItem) => (
                                 <option key={attorneyItem.id} value={attorneyItem.id}>{attorneyItem.name}</option>
                             ))
                             }
                         </CSelect>
-                        <CInvalidFeedback >Selecione uma escritório</CInvalidFeedback>
+                        {visibleFields ? <CInvalidFeedback >Selecione um Advogado</CInvalidFeedback> : "" }
                         </CFormGroup>
                     </CCol>
-                    <CCol xs="4">
+                    <CCol xs="4" hidden={!visibleFields}>
                       <CFormGroup>
                         <CLabel htmlFor="stageProcess">Estágio processo</CLabel>
                         <CInput id="stageProcess" name="stageProcess" placeholder="Estágio em que o processo se encontra" />
@@ -322,7 +362,7 @@ const ProcessSave = () => {
                     </CCol>
                   </CRow>
                   <CRow>
-                    <CCol xs="4">
+                    <CCol xs="4" hidden={!visibleFields}>
                           <CLabel htmlFor="links">Links Útils</CLabel>
                           <CTextarea 
                             name="links" 
@@ -331,7 +371,7 @@ const ProcessSave = () => {
                             placeholder="https://brasilia.gov.com.br, ..." 
                             />
                       </CCol>
-                      <CCol xs="8">
+                      <CCol xs="8" hidden={!visibleFields}>
                           <CLabel htmlFor="comment">Comentário</CLabel>
                           <CTextarea 
                             name="comment" 

@@ -158,6 +158,7 @@ const CompanyReport = () => {
                   (item)=>{return (<td><CBadge>{item.companyType.name}</CBadge></td>) },
                 'situation':
                   (item)=>{return (<td><CBadge color={getSituationColor(item.situation.description)}>{item.situation.description}</CBadge></td>)},
+                
                 }}
             />
             <CPagination

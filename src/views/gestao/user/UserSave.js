@@ -159,7 +159,7 @@ const UserSave = () => {
   if(id !== undefined && haveSearchPermission) {
     id = parseInt(id.replace(/\D/g, ''));
     
-    if(parseInt(infoLogin.type) === TYPE_USER_ADMIN && parseInt(infoLogin.iduser) === id) {
+    if(parseInt(infoLogin.type) === TYPE_USER_ADMIN ) {
       getUser(id);
     }
     sethaveSearchPermission(false);

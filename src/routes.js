@@ -27,6 +27,8 @@ const ActionList = React.lazy(() => import('./views/administrativo/action/Action
 
 const ProcessSave = React.lazy(() => import('./views/administrativo/process/ProcessSave'));
 const ProcessList = React.lazy(() => import('./views/administrativo/process/ProcessList'));
+const ProcessTabs = React.lazy(() => import('./views/administrativo/process/ProcessTabs'));
+
 
 const CompanyReport = React.lazy(() => import('./views/reports/company/CompanyReport'));
 const AttorneyReport = React.lazy(() => import('./views/reports/attorney/AttorneyReport'));
@@ -92,11 +94,12 @@ const routes = [
 
   { path: '/administrativo/process/salvar/:id?', name: 'Salvar Processo', component: ProcessSave},
   { path: '/administrativo/process/list', name: 'Lista Processos', component: ProcessList},
+  { path: '/administrativo/process/maintenance/:id?', name: 'Processo', component: ProcessTabs},
 
   { path: '/reports/company/list', name: 'Relatório Empresas', component: CompanyReport},
   { path: '/reports/attorney/list', name: 'Relatório Advogados', component: AttorneyReport},
   { path: '/reports/process/list', name: 'Relatório Processos', component: ProcessReport},
-
+  
   { path: '/administrativo/city', name: "Cidades", component: CityList},
   { path: '/base/jumbotrons', name: 'Jumbotrons', component: Jumbotrons },
   { path: '/base/list-groups', name: 'List Groups', component: ListGroups },

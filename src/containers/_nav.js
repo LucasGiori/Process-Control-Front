@@ -158,6 +158,12 @@ const _nav =  [
             to: '/administrativo/process/list',
             icon:  <CIcon/>,
           },
+          // {
+          //   _tag: 'CSidebarNavItem',
+          //   name: 'Manutenção',
+          //   to: '/administrativo/process/maintenance',
+          //   icon:  <CIcon/>
+          // }
         ]
       },
     ]
@@ -208,7 +214,7 @@ const _nav =  [
         _children: [
           {
             _tag: 'CSidebarNavItem',
-            name: 'Listar',
+            name: 'Relatório Geral',
             to: '/reports/process/list',
             icon:  <CIcon/>,
           },

@@ -93,7 +93,7 @@ const CompanyReport = () => {
   const [typeFilter, setTypeFilter] = React.useState(FILTER_NUMBER);
 
   const [redirect, setRedirect] = React.useState({isRedirect: false, id: false});
-  let redirecting = redirect.isRedirect ? (<Redirect push to={`/administrativo/process/salvar/${redirect.id}`}/>) : '';
+  let redirecting = redirect.isRedirect ? (<Redirect push to={`/administrativo/process/maintenance/${redirect.id}`}/>) : '';
           
   
   const findProcess = async () => {
@@ -139,7 +139,7 @@ const CompanyReport = () => {
             const result_filtered = result.data.data.data.filter(filterData);
             result.data.data.data = result_filtered
         }
-        console.log(result.data.data.data)
+
         setData(result.data);
       } catch(error){
         setError(error);
@@ -338,18 +338,17 @@ const CompanyReport = () => {
                 'detalhes':
                   (item, index)=>{
                     return (
-                      <td className="py-2">
-                        <a herf={`/reports/process/list/${item.id}`}>                
+                      <td className="py-2">               
                         <CButton
-                          id={`btndelete${item.id}`}
+                          id={`btndetalhes${item.id}`}
                           color="info"
                           variant="outline"
                           shape="square"
+                          onClick={() => setRedirect({isRedirect: true, id: item.id})}
                           size="sm"
                         >
                           Detalhes
                         </CButton>
-                        </a>
                       </td>
                       )
                   },
