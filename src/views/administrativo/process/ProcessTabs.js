@@ -147,6 +147,7 @@ const ProcessTabs = () => {
             })
 
             const comments  =  movements.map(function(item) {
+                console.log(item)
                 const title = "Comentário....";
                 return {
                     title: item.createdAt,
